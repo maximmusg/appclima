@@ -1,61 +1,72 @@
 import { useState, createContext } from "react";
-import axios from "axios";
+// import axios from "axios";
 
-const ClimaContext = createContext()
+const ClimaContext = createContext();
 
-const ClimaProvider = ({children}) => {
+const ClimaProvider = ({ children }) => {
+  const [busqueda, setBuqueda] = useState({
+    ciudad: "",
+    pais: "",
+  });
 
+  const [resultado, setResultado] = useState({});
 
-    const [busqueda, setBuqueda] = useState({
-        ciudad: '',
-        pais: ''
-    })
+  const [cargando, setCargando] = useState(false);
+  const [noResultado, setNoResultado] = useState(false);
 
-    const [resultado, setResultado] = useState({})
-    const [cargando, setCargando] = useState(false)
-    const [noResultado, setNoResultado] = useState(false)
+  const datosBusqueda = (e) => {
+    setBuqueda({
+      ...busqueda,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-    const datosBusqueda = e => {
-        setBuqueda({
-            ...busqueda,
-            [e.target.name]: e.target.value
-        })
-    }
+  const urlBase = "https://api.openweathermap.org/data/2.5/weather";
 
-    const consultarClima = async datos => {
-        setCargando(true)
-        setNoResultado(false)
-        try {
-            const {ciudad, pais} = datos
+  const API_KEY = "c0f14439fdb58bf309b25562b4c185cb";
 
-            const appId = import.meta.env.VITE_API_KEY
+  const consultarClima = async () => {
+    try {
+      setCargando(true);
 
-            const url = `http://api.openweathermap.org/geo/1.0/direct?q=${ciudad},${pais}&limit=1&appid=${appId}`
+      if (busqueda.ciudad && busqueda.pais) {
+        const response = await fetch(
+          `${urlBase}?q=${busqueda.ciudad},${busqueda.pais}&appid=${API_KEY}`
+        );
 
-            const {data} = await axios(url)
-            const { lat, lon } = data[0]
-
-            const urlClima = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${appId}`
-
-            const { data: clima } = await axios(urlClima)
-            setResultado(clima)
-
-        } catch (error) {
-            setNoResultado('No hay resultados')
-        } finally {
-            setCargando(false)
+        if (response.ok) {
+          const data = await response.json();
+          setResultado(data);
+        } else {
+          setNoResultado("No se encontraron datos");
         }
+      } else {
+        setNoResultado("Todos los Campos son obligatorios");
+      }
+    } catch (error) {
+      console.error("Error: ", error);
+      setNoResultado("Ocurrio un error al consultar el clima");
+    } finally {
+      setCargando(false);
     }
+  };
 
-    return (
-        <ClimaContext.Provider value={{busqueda, datosBusqueda, consultarClima, resultado, cargando, noResultado}} >
-            {children}
-        </ClimaContext.Provider>
-    )
-}
+  return (
+    <ClimaContext.Provider
+      value={{
+        busqueda,
+        datosBusqueda,
+        consultarClima,
+        resultado,
+        cargando,
+        noResultado,
+      }}
+    >
+      {children}
+    </ClimaContext.Provider>
+  );
+};
 
-export {
-    ClimaProvider
-}
+export { ClimaProvider };
 
-export default ClimaContext
+export default ClimaContext;
