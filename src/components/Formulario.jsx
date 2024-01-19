@@ -6,21 +6,21 @@ const Formulario = () => {
 
   const { busqueda, datosBusqueda, consultarClima } = useClima();
 
-  const { ciudad, pais } = busqueda;
+  const { ciudad } = busqueda;
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (Object.values(busqueda).includes("")) {
-      setAlerta("Todos los campos son obligatorios ");
-      return;
-    }
-    setAlerta("");
+    // if (Object.values(busqueda).includes("")) {
+    //   setAlerta("Todos los campos son obligatorios ");
+    //   return;
+    // }
+    // setAlerta("");
     consultarClima(busqueda);
   };
 
   return (
-    <div className="contenedor">
+    <div className="contenedor cont-form">
       {alerta && <p>{alerta}</p>}
 
       <form onSubmit={handleSubmit}>
@@ -34,7 +34,7 @@ const Formulario = () => {
             value={ciudad}
           />
         </div>
-        <div className="campo">
+        {/* <div className="campo">
           <label htmlFor="pais">Pais</label>
           <select name="pais" id="pais" onChange={datosBusqueda} value={pais}>
             <option value="">Seleccione un pais</option>
@@ -49,7 +49,7 @@ const Formulario = () => {
             <option value="PE">Peru</option>
             <option value="PB">Paises Bajos</option>
           </select>
-        </div>
+        </div> */}
         <input type="submit" value="Consultar clima" />
       </form>
     </div>

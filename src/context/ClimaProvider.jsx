@@ -29,9 +29,9 @@ const ClimaProvider = ({ children }) => {
     try {
       setCargando(true);
 
-      if (busqueda.ciudad && busqueda.pais) {
+      if (busqueda.ciudad) {
         const response = await fetch(
-          `${urlBase}?q=${busqueda.ciudad},${busqueda.pais}&appid=${API_KEY}`
+          `${urlBase}?q=${busqueda.ciudad}&appid=${API_KEY}`
         );
 
         if (response.ok) {

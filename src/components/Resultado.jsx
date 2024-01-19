@@ -25,7 +25,7 @@ const Resultado = () => {
           </p>
         </div>
         <p className="result-condition">
-          condición meteorológica: {resultado.weather[0].description}
+          Condición meteorológica: {resultado.weather[0].description}
         </p>
       </div>
       <div className="temp_min_max">
